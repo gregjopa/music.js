@@ -1,0 +1,302 @@
+<!doctype html>
+<html>
+<head>
+<title>music.js - demo</title>
+<!-- demo by Greg Jopa - http://www.gregjopa.com/2011/05/calculate-note-frequencies-in-javascript-with-music-js -->
+<script src="../music.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+
+<!--jQuery UI -->
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+
+<!-- Audiolet.js -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/mootools/1.3.2/mootools-yui-compressed.js"></script>
+<script type="text/javascript" src="audiolet/Audiolet.js"></script>
+<script type="text/javascript" src="audiolet/audiolet_app.js"></script>
+
+
+<style type="text/css">
+body {
+	font-family: "Trebuchet MS", "Helvetica", "Arial",  "Verdana", "sans-serif";
+	font-size: 75%;
+	width: 960px;
+	margin: 10px auto;
+}
+
+div.code {
+    background: none repeat scroll 0 0 #ededed;
+    border: 10px solid #d3d3d3;
+    width: 90%;
+}
+
+p#desc {
+    font-size: 14px;
+}
+</style>
+
+<script>
+
+	$(function() {
+		
+		$( "#tabs" ).tabs();
+
+		updateNoteTable(Note.fromLatin($('#note').val()+$('#accidental').val()+parseInt($('#octave').val())));
+		updateScaleTable(Note.fromLatin($('#note2').val()+$('#accidental2').val()+parseInt($('#octave2').val())));
+	
+		$('#noteInput ,select').change(function() {
+			updateNoteTable(Note.fromLatin($('#note').val()+$('#accidental').val()+parseInt($('#octave').val())));
+		});
+		
+		$('#scaleInput ,select').change(function() {
+			updateScaleTable(Note.fromLatin($('#note2').val()+$('#accidental2').val()+parseInt($('#octave2').val())));
+		});
+	});
+
+	// Audiolet.js is used for audio synthesis: https://github.com/oampo/Audiolet
+	
+	function playNote(note) {
+		this.audioletApp = new AudioletAppNote(note);
+	}
+	
+	function playChord(note) {
+		var intervals = new Array();
+		
+		$("#chordCheckboxes :input:checked").each(function() {
+			intervals.push($(this).val());
+		});
+		
+		var chord = note.add(intervals);
+		this.audioletApp = new AudioletAppChord(chord);
+	}
+	
+	function playScale(note) {
+		var scale = note.scale($("#scale").val());
+		this.audioletApp = new AudioletAppScale(scale);
+	}
+
+	
+	function updateNoteTable(note)
+	{
+		var noteHTML = "<table border='1'><tr><th>Name:</th><td>" + note.latin() + note.octave() + "</td></tr>";
+		
+		// frequency
+		noteHTML += "<tr><th>Frequency (Hz):</th><td id='freq'>" + Math.round(note.frequency()*100)/100 + "</td></tr></table>";
+		
+		$('#noteTable').empty();
+		$('#noteTable').append(noteHTML);
+	}	
+	
+	function updateScaleTable(note)
+	{
+		var scale = note.scale($("#scale").val());
+		
+		var scaleHTML = "<table border='1'><tr><th colspan=" + scale.length+1 + ">" + note.latin() + " " + $("#scale").val() + " scale: </th></tr><tr>";
+		
+		for (var i=0; i<scale.length; i++) {
+			scaleHTML += "<td width='40px'>" + scale[i].latin() + "</td>";
+		}
+		
+		scaleHTML += "</tr></table>";
+		
+		$('#scaleTable').empty();
+		$('#scaleTable').append(scaleHTML);
+	}
+	
+</script>
+
+</head>
+<body>
+
+<h1>music.js</h1> 
+<h2>easily generate frequencies for notes, chords, scales, and more</h2>
+<p id="desc">This demo uses <a href="https://github.com/GregJ/music.js" target="_blank">music.js</a> with <a href="https://github.com/oampo/Audiolet" target="_blank">audiolet.js</a> for audio synthesis</p>
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-notes">Notes</a></li>
+		<li><a href="#tabs-chords">Chords</a></li>
+		<li><a href="#tabs-scales">Scales</a></li>
+		<li><a href="#tabs-transpose">Transpose</a></li>
+	</ul>
+	<div id="tabs-notes">
+		<h3>note syntax</h3>
+		<div class="code">
+			var n = Note.fromLatin('A4'); <br /><br />
+			var freq = n.frequency(); // returns 440 <br />
+			var name = n.latin(); // returns "A" <br />
+			var octave = n.octave(); // returns 4
+		</div>
+		<br />
+		<h3>note demo</h3>
+	
+		<div id="noteInput">
+		note
+		<select id="note">
+			<option selected="selected">A</option>
+			<option>B</option>
+			<option>C</option>
+			<option>D</option>
+			<option>E</option>
+			<option>F</option>
+			<option>G</option>
+		</select>
+		accidental
+		<select id="accidental">
+			<option selected="selected"></option>
+			<option>#</option>
+			<option>b</option>
+		</select>
+		octave
+		<select id="octave">
+			<option>0</option>
+			<option>1</option>
+			<option>2</option>
+			<option>3</option>
+			<option selected="selected">4</option>
+			<option>5</option>
+			<option>6</option>
+			<option>7</option>
+		</select>
+		<button onclick="playNote(Note.fromLatin($('#note').val()+$('#accidental').val()+parseInt($('#octave').val())))">Play</button>
+		</div>
+		<br />
+		<div id="noteTable"></div>
+	</div>
+	
+	<div id="tabs-chords">
+		<h3>chord syntax</h3>
+		<div class="code">
+			// by intervals <br />
+			var c = Note.fromLatin('C4'); <br />
+			var cmaj = c.add(['unison','major third','fifth']); <br /><br />
+			// or by note names <br />
+			var cmaj = Note.fromLatin('C4E4G4'); <br /><br /><br />
+			// then loop through chord array for each note object <br />
+			for (var i = 0; i < cmaj.length; i++) { <br />
+			console.log(cmaj[i].frequency()); <br />
+			}
+		</div>
+		<br />
+		<h3>chord demo</h3>
+		<p>note
+		<select id="note1">
+			<option>A</option>
+			<option>B</option>
+			<option selected="selected">C</option>
+			<option>D</option>
+			<option>E</option>
+			<option>F</option>
+			<option>G</option>
+		</select>
+		accidental
+		<select id="accidental1">
+			<option selected="selected"></option>
+			<option>#</option>
+			<option>b</option>
+		</select>
+		octave
+		<select id="octave1">
+			<option>0</option>
+			<option>1</option>
+			<option>2</option>
+			<option>3</option>
+			<option selected="selected">4</option>
+			<option>5</option>
+			<option>6</option>
+			<option>7</option>
+		</select>
+		<button onclick="playChord(Note.fromLatin($('#note1').val()+$('#accidental1').val()+parseInt($('#octave1').val())))">Play</button>
+		</p>
+		<div id="chordCheckboxes">
+			<input type="checkbox" name="chkChord" value="unison" checked="checked" /> unison<br />
+			<input type="checkbox" name="chkChord" value="minor second" /> minor second<br />
+			<input type="checkbox" name="chkChord" value="major second" /> major second<br />
+			<input type="checkbox" name="chkChord" value="minor third" /> minor third<br />
+			<input type="checkbox" name="chkChord" value="major third" checked="checked" /> major third<br />
+			<input type="checkbox" name="chkChord" value="fourth" /> fourth<br />
+			<input type="checkbox" name="chkChord" value="augmented fourth" /> augmented fourth<br />
+			<input type="checkbox" name="chkChord" value="tritone" /> tritone<br />
+			<input type="checkbox" name="chkChord" value="diminished fifth" /> diminished fifth<br />
+			<input type="checkbox" name="chkChord" value="fifth" checked="checked" /> fifth<br />
+			<input type="checkbox" name="chkChord" value="minor sixth" /> minor sixth<br />
+			<input type="checkbox" name="chkChord" value="major sixth" /> major sixth<br />
+			<input type="checkbox" name="chkChord" value="minor seventh" /> minor seventh<br />
+			<input type="checkbox" name="chkChord" value="major seventh" /> major seventh<br />
+			<input type="checkbox" name="chkChord" value="octave" /> octave<br />
+		</div>
+	</div>
+	<div id="tabs-scales">
+		<h3>scale syntax</h3>
+		<div class="code">
+			var n = Note.fromLatin('C4'); <br />
+			var majorScale = n.scale('major'); <br /><br />
+			// then loop through scale array for each note object <br />
+			for (var i = 0; i < majorScale.length; i++) { <br />
+			console.log(majorScale[i].frequency()); <br />
+			} <br />
+		</div>
+		<br />
+		<h3>scale demo</h3>
+		<div id="scaleInput">
+			note
+			<select id="note2">
+				<option>A</option>
+				<option>B</option>
+				<option selected="selected">C</option>
+				<option>D</option>
+				<option>E</option>
+				<option>F</option>
+				<option>G</option>
+			</select>
+			accidental
+			<select id="accidental2">
+				<option selected="selected"></option>
+				<option>#</option>
+				<option>b</option>
+			</select>
+			octave
+			<select id="octave2">
+				<option>0</option>
+				<option>1</option>
+				<option>2</option>
+				<option>3</option>
+				<option selected="selected">4</option>
+				<option>5</option>
+				<option>6</option>
+				<option>7</option>
+			</select>
+			
+			<button onclick="playScale(Note.fromLatin($('#note2').val()+$('#accidental2').val()+parseInt($('#octave2').val())))">Play</button>
+			<br />			
+			<br />
+			<select name="scale" id="scale" onchange='changeScale(this);'>
+				<option value="major" selected>major</option>
+				<option value="natural minor">natural minor</option>
+				<option value="harmonic minor">harmonic minor</option>
+				<option value="major pentatonic">major pentatonic</option>
+				<option value="minor pentatonic">minor pentatonic</option>
+			</select>
+		</div>
+	
+		<br />
+		<div id="scaleTable"></div>
+	</div>
+	
+	<div id="tabs-transpose">
+		<h3>transpose syntax</h3>
+		<div class="code">
+			var c = Note.fromLatin('C3'); <br /><br />
+			// by semitone <br />
+			var wholeStep = Interval.fromSemitones(2); <br />
+			var d = c.add(wholeStep); <br />
+			console.log(d.latin()); // "D" <br /><br />
+			// by interval name <br />
+			var g = c.add('fifth'); <br />
+			console.log(g.latin()); // "G"
+		</div>
+		<br />
+	</div>
+</div>
+
+</body>
+</html>

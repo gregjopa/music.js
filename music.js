@@ -38,21 +38,21 @@ var MUSIC = {
 	
 	// intervals - two dimensional [octave, fifth] - relative to the 'main' note
 	intervals: {
-		'unison':			[ 0, 0],
+		'unison':		[ 0, 0],
 		'minor second': 	[ 3,-5],
 		'major second': 	[-1, 2],
 		'minor third': 		[ 2,-3],
 		'major third': 		[-2, 4],
-		'fourth': 			[ 1,-1],
+		'fourth': 		[ 1,-1],
 		'augmented fourth':	[-3, 6],
-		'tritone': 			[-3, 6],
+		'tritone': 		[-3, 6],
 		'diminished fifth':	[ 4,-6],
-		'fifth': 			[ 0, 1],
+		'fifth': 		[ 0, 1],
 		'minor sixth': 		[ 3,-4],
 		'major sixth': 		[-1, 3],
 		'minor seventh':	[ 2,-2],
 		'major seventh':	[-2, 5],
-		'octave':			[ 1, 0]
+		'octave':		[ 1, 0]
 	},
 
     intervals_semitones: {
@@ -70,7 +70,7 @@ var MUSIC = {
 	},
 	
 	scales: {
-		'major':			['major second','major third','fourth','fifth','major sixth','major seventh'],
+		'major':		['major second','major third','fourth','fifth','major sixth','major seventh'],
 		'natural minor':	['major second','minor third','fourth','fifth','minor sixth','minor seventh'],
 		'harmonic minor':	['major second','minor third','fourth','fifth','minor sixth','major seventh'],
 		'major pentatonic':	['major second','major third','fifth','major sixth'],

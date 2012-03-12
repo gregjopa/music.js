@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Music.js Tests</title>
+ <link rel="stylesheet" href="support/qunit.css" >
+ <script src="support/jquery.min.js"></script>
+ <script src="support/qunit.js"></script>
+
+ <script src="../music.js"></script>
+
+<script>
+  
+  // equal temperament tuning - frequencies
+  // source: http://www.phy.mtu.edu/~suits/notefreqs.html
+  var equalTemperamentFreqs = [
+    {
+        "name": "C",
+        "octave": 1,
+        "frequency": 32.7
+    },
+    {
+        "name": "Db",
+        "octave": 1,
+        "frequency": 34.65
+    },
+    {
+        "name": "D",
+        "octave": 1,
+        "frequency": 36.71
+    },
+    {
+        "name": "Eb",
+        "octave": 1,
+        "frequency": 38.89
+    },
+    {
+        "name": "E",
+        "octave": 1,
+        "frequency": 41.2
+    },
+    {
+        "name": "F",
+        "octave": 1,
+        "frequency": 43.65
+    },
+    {
+        "name": "F#",
+        "octave": 1,
+        "frequency": 46.25
+    },
+    {
+        "name": "G",
+        "octave": 1,
+        "frequency": 49
+    },
+    {
+        "name": "Ab",
+        "octave": 1,
+        "frequency": 51.91
+    },
+    {
+        "name": "A",
+        "octave": 1,
+        "frequency": 55
+    },
+    {
+        "name": "Bb",
+        "octave": 1,
+        "frequency": 58.27
+    },
+    {
+        "name": "B",
+        "octave": 1,
+        "frequency": 61.74
+    },
+
+    {
+        "name": "C",
+        "octave": 2,
+        "frequency": 65.41
+    },
+    {
+        "name": "Db",
+        "octave": 2,
+        "frequency": 69.3
+    },
+    {
+        "name": "D",
+        "octave": 2,
+        "frequency": 73.42
+    },
+    {
+        "name": "Eb",
+        "octave": 2,
+        "frequency": 77.78
+    },
+    {
+        "name": "E",
+        "octave": 2,
+        "frequency": 82.41
+    },
+    {
+        "name": "F",
+        "octave": 2,
+        "frequency": 87.31
+    },
+    {
+        "name": "F#",
+        "octave": 2,
+        "frequency": 92.5
+    },
+    {
+        "name": "G",
+        "octave": 2,
+        "frequency": 98
+    },
+    {
+        "name": "Ab",
+        "octave": 2,
+        "frequency": 103.83
+    },
+    {
+        "name": "A",
+        "octave": 2,
+        "frequency": 110
+    },
+    {
+        "name": "Bb",
+        "octave": 2,
+        "frequency": 116.54
+    },
+    {
+        "name": "B",
+        "octave": 2,
+        "frequency": 123.47
+    }
+  ]
+
+
+  // Note class
+  module('Note');
+  test('frequency', function() {
+
+      var len = equalTemperamentFreqs.length,
+          i, note, name, freq;
+
+      for (i = 0; i < len; i++) {
+
+          name = equalTemperamentFreqs[i].name + equalTemperamentFreqs[i].octave;
+          note = Note.fromLatin(name);
+
+          // round frequency two decimal places
+          roundedFreq = Math.round(note.frequency() * 100) / 100;
+
+          equals(roundedFreq, equalTemperamentFreqs[i].frequency, name + ' frequency is ' + roundedFreq);
+      }
+
+  });
+
+  test('latin name', function() {
+
+      var len = equalTemperamentFreqs.length,
+          i, note, name;
+
+      for (i = 0; i < len; i++) {
+
+          name = equalTemperamentFreqs[i].name + equalTemperamentFreqs[i].octave;
+          note = Note.fromLatin(name);
+
+          equals(note.latin(), equalTemperamentFreqs[i].name, name + ' latin name is ' + note.latin());
+      }
+
+  });
+
+  test('octave', function() {
+
+    var len = equalTemperamentFreqs.length,
+        i, note, name;
+
+      for (i = 0; i < len; i++) {
+
+          name = equalTemperamentFreqs[i].name + equalTemperamentFreqs[i].octave;
+          note = Note.fromLatin(name);
+
+          equals(note.octave(), equalTemperamentFreqs[i].octave, name + ' octave is ' + note.octave());
+      }
+
+  });
+
+
+
+  // Interval class
+  module('Interval');
+  test('add', function() {
+
+      var baseNote = Note.fromLatin('A4');
+
+      var interval = Interval.fromName('minor second');
+      var newNote = baseNote.add(interval);
+      var newNoteName = newNote.latin() + newNote.octave();
+
+      equals(newNoteName, 'Bb4', 'the minor second above A4 is ' + newNoteName);
+
+      interval = Interval.fromName('fifth');
+      newNote = baseNote.add(interval);
+      newNoteName = newNote.latin() + newNote.octave();
+
+      equals(newNoteName, 'E5', 'the fifth above A4 is ' + newNoteName);
+
+      interval = Interval.fromName('major seventh');
+      newNote = baseNote.add(interval);
+      newNoteName = newNote.latin() + newNote.octave();
+
+      equals(newNoteName, 'G#5', 'the major seventh above A4 is ' + newNoteName);
+
+  });
+
+  test('subtract', function() {
+
+      var baseNote = Note.fromLatin('A4');
+
+      var interval = Interval.fromName('minor second');
+      var newNote = baseNote.subtract(interval);
+      var newNoteName = newNote.latin() + newNote.octave();
+
+      equals(newNoteName, 'G#4', 'the minor second below A4 is ' + newNoteName);
+
+      interval = Interval.fromName('fifth');
+      newNote = baseNote.subtract(interval);
+      newNoteName = newNote.latin() + newNote.octave();
+
+      equals(newNoteName, 'D4', 'the fifth below A4 is ' + newNoteName);
+
+      interval = Interval.fromName('major seventh');
+      newNote = baseNote.subtract(interval);
+      newNoteName = newNote.latin() + newNote.octave();
+
+      equals(newNoteName, 'Bb3', 'the major seventh below A4 is ' + newNoteName);
+
+  });
+
+</script>
+
+</head>
+<body>
+  <h1 id="qunit-header">Music.js Tests</h1>
+  <h2 id="qunit-banner"></h2>
+  <h2 id="qunit-userAgent"></h2>
+  <ol id="qunit-tests"></ol>
+</body>
+</html>

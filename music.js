@@ -76,6 +76,8 @@ var MUSIC = {
 		'major pentatonic':	['major second','major third','fifth','major sixth'],
 		'minor pentatonic':	['minor third','fourth','minor sixth','minor seventh']
 	}
+        0:  [0, 0],
+        12: [1, 0]
 };
 
 

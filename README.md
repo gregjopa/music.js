@@ -1,4 +1,4 @@
-# MUSIC.js
+# music.js
 ## Overview
 
 music.js is a music creation library for javascript. It includes functions 
@@ -26,6 +26,7 @@ var majorScale = n.scale('major');  // scale = array of notes
 
 ### Interval
 ``` Interval.fromName(name) ```: Interval by name
+
 ``` Interval.fromSemitones(num) ```: Interval by semitones
 
 ```javascript

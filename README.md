@@ -2,12 +2,12 @@
 ## Overview
 
 music.js is a music creation library for javascript. It includes functions 
-and data sets to generate notes, intervals, chords, scales, ...
+and data sets to generate notes, intervals, chords, and scales.
 
 ## Example usage
   
 ### Note
-```javascript Note.fromLatin(name) ```: Note by latin name and octave
+``` Note.fromLatin(name) ```: Note by latin name and octave
 
 ```javascript	
 var n = Note.fromLatin('A4');  // single note
@@ -25,8 +25,8 @@ var majorScale = n.scale('major');  // scale = array of notes
 ``` 
 
 ### Interval
-```javascript Interval.fromName(name) ```: Interval by name
-```javascript Interval.fromSemitones(num) ```: Interval by semitones
+``` Interval.fromName(name) ```: Interval by name
+``` Interval.fromSemitones(num) ```: Interval by semitones
 
 ```javascript
 var fifth = Interval.fromName('fifth');  // define by name

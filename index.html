@@ -3,7 +3,7 @@
 <head>
 <title>music.js - demo</title>
 <!-- demo by Greg Jopa - http://www.gregjopa.com/2011/05/calculate-note-frequencies-in-javascript-with-music-js -->
-<script src="../music.js"></script>
+<script src="music.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
 
 <!--jQuery UI -->
@@ -38,77 +38,77 @@ p#desc {
 <script>
 
 	$(function() {
-		
+
 		$( "#tabs" ).tabs();
 
 		updateNoteTable(Note.fromLatin($('#note').val()+$('#accidental').val()+parseInt($('#octave').val())));
 		updateScaleTable(Note.fromLatin($('#note2').val()+$('#accidental2').val()+parseInt($('#octave2').val())));
-	
+
 		$('#noteInput ,select').change(function() {
 			updateNoteTable(Note.fromLatin($('#note').val()+$('#accidental').val()+parseInt($('#octave').val())));
 		});
-		
+
 		$('#scaleInput ,select').change(function() {
 			updateScaleTable(Note.fromLatin($('#note2').val()+$('#accidental2').val()+parseInt($('#octave2').val())));
 		});
 	});
 
 	// Audiolet.js is used for audio synthesis: https://github.com/oampo/Audiolet
-	
+
 	function playNote(note) {
 		this.audioletApp = new AudioletAppNote(note);
 	}
-	
+
 	function playChord(note) {
 		var intervals = new Array();
-		
+
 		$("#chordCheckboxes :input:checked").each(function() {
 			intervals.push($(this).val());
 		});
-		
+
 		var chord = note.add(intervals);
 		this.audioletApp = new AudioletAppChord(chord);
 	}
-	
+
 	function playScale(note) {
 		var scale = note.scale($("#scale").val());
 		this.audioletApp = new AudioletAppScale(scale);
 	}
 
-	
+
 	function updateNoteTable(note)
 	{
 		var noteHTML = "<table border='1'><tr><th>Name:</th><td>" + note.latin() + note.octave() + "</td></tr>";
-		
+
 		// frequency
 		noteHTML += "<tr><th>Frequency (Hz):</th><td id='freq'>" + Math.round(note.frequency()*100)/100 + "</td></tr></table>";
-		
+
 		$('#noteTable').empty();
 		$('#noteTable').append(noteHTML);
-	}	
-	
+	}
+
 	function updateScaleTable(note)
 	{
 		var scale = note.scale($("#scale").val());
-		
+
 		var scaleHTML = "<table border='1'><tr><th colspan=" + scale.length+1 + ">" + note.latin() + " " + $("#scale").val() + " scale: </th></tr><tr>";
-		
+
 		for (var i=0; i<scale.length; i++) {
 			scaleHTML += "<td width='40px'>" + scale[i].latin() + "</td>";
 		}
-		
+
 		scaleHTML += "</tr></table>";
-		
+
 		$('#scaleTable').empty();
 		$('#scaleTable').append(scaleHTML);
 	}
-	
+
 </script>
 
 </head>
 <body>
 
-<h1>music.js</h1> 
+<h1>music.js</h1>
 <h2>easily generate frequencies for notes, chords, scales, and more</h2>
 <p id="desc">This demo uses <a href="https://github.com/GregJ/music.js" target="_blank">music.js</a> with <a href="https://github.com/oampo/Audiolet" target="_blank">audiolet.js</a> for audio synthesis</p>
 <div id="tabs">
@@ -128,7 +128,7 @@ p#desc {
 		</div>
 		<br />
 		<h3>note demo</h3>
-	
+
 		<div id="noteInput">
 		note
 		<select id="note">
@@ -162,7 +162,7 @@ p#desc {
 		<br />
 		<div id="noteTable"></div>
 	</div>
-	
+
 	<div id="tabs-chords">
 		<h3>chord syntax</h3>
 		<div class="code">
@@ -265,9 +265,9 @@ p#desc {
 				<option>6</option>
 				<option>7</option>
 			</select>
-			
+
 			<button onclick="playScale(Note.fromLatin($('#note2').val()+$('#accidental2').val()+parseInt($('#octave2').val())))">Play</button>
-			<br />			
+			<br />
 			<br />
 			<select name="scale" id="scale" onchange='changeScale(this);'>
 				<option value="major" selected>major</option>
@@ -277,11 +277,11 @@ p#desc {
 				<option value="minor pentatonic">minor pentatonic</option>
 			</select>
 		</div>
-	
+
 		<br />
 		<div id="scaleTable"></div>
 	</div>
-	
+
 	<div id="tabs-transpose">
 		<h3>transpose syntax</h3>
 		<div class="code">
